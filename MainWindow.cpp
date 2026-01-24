@@ -5,6 +5,7 @@
 #include <cstring>
 
 #define WINDOW_DEFAULT_WIDTH 200
+#define TIMEOUT_PERIOD 400
 
 const char* TOGGLE_ON_TEXT = "Toggle on";
 const char* TOGGLE_OFF_TEXT = "Toggle off";
@@ -61,5 +62,25 @@ void MainWindow::init_labels() {
 }
 
 void MainWindow::on_m_button_press() {
-    puts("Here");
+    is_ads_active = !is_ads_active;
+    if (is_ads_active) {
+        m_button.set_label(TOGGLE_OFF_TEXT);
+
+        update_connection = Glib::signal_timeout().connect(
+            sigc::mem_fun(*this, &MainWindow::on_timeout),
+            TIMEOUT_PERIOD
+        );
+        update_timer.reset();
+    }
+    else {
+        m_button.set_label(TOGGLE_ON_TEXT);
+        update_connection.disconnect();
+    }
+}
+
+bool MainWindow::on_timeout() {
+    double elapsed = update_timer.elapsed();
+    update_timer.reset();
+    printf("%.2f\n", elapsed);
+    return true;
 }
