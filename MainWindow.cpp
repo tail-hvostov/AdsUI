@@ -4,13 +4,15 @@
 #include <cstdint>
 #include <cstring>
 
-#define WINDOW_DEFAULT_WIDTH 300
+#define WINDOW_DEFAULT_WIDTH 200
 
 const char* TOGGLE_ON_TEXT = "Toggle on";
 const char* TOGGLE_OFF_TEXT = "Toggle off";
 
 MainWindow::MainWindow() : m_button(TOGGLE_ON_TEXT),
-                            m_box(Gtk::ORIENTATION_VERTICAL, 5) {
+                            m_box(Gtk::ORIENTATION_VERTICAL, 5),
+                            m_fh_label("Frequency"),
+                            m_fv_label("0") {
     set_title("ADS controller");
     set_default_size(WINDOW_DEFAULT_WIDTH, 200);
     
@@ -18,7 +20,7 @@ MainWindow::MainWindow() : m_button(TOGGLE_ON_TEXT),
 
     m_grid.set_column_spacing(10);
     m_grid.set_row_spacing(5);
-    
+
     m_box.set_margin_top(10);
     m_box.set_margin_bottom(10);
     m_box.set_margin_start(10);
@@ -38,7 +40,9 @@ MainWindow::MainWindow() : m_button(TOGGLE_ON_TEXT),
 void MainWindow::init_labels() {
     char buf[10];
     Gtk::Label* prev = Gtk::make_managed<Gtk::Label>("0.");
+    prev->set_halign(Gtk::ALIGN_START);
     val_labels[0] = Gtk::make_managed<Gtk::Label>("0");
+    val_labels[0]->set_halign(Gtk::ALIGN_START);
     m_grid.add(*prev);
     m_grid.add(*val_labels[0]);
     for (int i = 1; i < INPUT_COUNT; i++) {
@@ -46,10 +50,14 @@ void MainWindow::init_labels() {
         Gtk::Label* l = Gtk::make_managed<Gtk::Label>(buf);
         m_grid.attach_next_to(*l, *prev, Gtk::POS_BOTTOM, 1, 1);
         prev = l;
+        prev->set_halign(Gtk::ALIGN_START);
         l = Gtk::make_managed<Gtk::Label>("0");
         m_grid.attach_next_to(*l, *val_labels[i - 1], Gtk::POS_BOTTOM, 1, 1);
         val_labels[i] = l;
+        l->set_halign(Gtk::ALIGN_START);
     }
+    m_grid.attach_next_to(m_fh_label, *prev, Gtk::POS_BOTTOM, 1, 1);
+    m_grid.attach_next_to(m_fv_label, *val_labels[INPUT_COUNT - 1], Gtk::POS_BOTTOM, 1, 1);
 }
 
 void MainWindow::on_m_button_press() {

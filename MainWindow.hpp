@@ -19,6 +19,8 @@ private:
     Gtk::Box m_box;
     Gtk::Grid m_grid;
     Gtk::Label* val_labels[INPUT_COUNT];
+    Gtk::Label m_fh_label;
+    Gtk::Label m_fv_label;
 public:
     MainWindow();
     virtual ~MainWindow() = default;
