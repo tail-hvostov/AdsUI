@@ -2,19 +2,29 @@
 
 #include <stdio.h>
 #include <atomic>
+#include <thread>
+#include <memory>
 
 namespace {
 	ADSR::AdsStats global_stats;
 	std::atomic_flag access_flag;
+	std::atomic<bool> measurements_needed;
+	std::unique_ptr<std::thread> measurement_thread;
+
+	void measurement_thread_proc() {
+		puts("measure");
+	}
 }
 
 namespace ADSR {
 	void start() {
-		puts("start");
+		measurements_needed.store(true);
+		measurement_thread.reset(new std::thread(&measurement_thread_proc));
 	}
 
 	void stop() {
-		puts("stop");
+		measurements_needed.store(false);
+		measurement_thread->join();
 	}
 
 	void retrieve(AdsStats& stats) {
