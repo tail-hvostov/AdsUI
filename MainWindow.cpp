@@ -46,7 +46,7 @@ void MainWindow::init_labels() {
     val_labels[0]->set_halign(Gtk::ALIGN_START);
     m_grid.add(*prev);
     m_grid.add(*val_labels[0]);
-    for (int i = 1; i < INPUT_COUNT; i++) {
+    for (int i = 1; i < ADSR::INPUT_COUNT; i++) {
         sprintf(buf, "%d.", i);
         Gtk::Label* l = Gtk::make_managed<Gtk::Label>(buf);
         m_grid.attach_next_to(*l, *prev, Gtk::POS_BOTTOM, 1, 1);
@@ -58,7 +58,7 @@ void MainWindow::init_labels() {
         l->set_halign(Gtk::ALIGN_START);
     }
     m_grid.attach_next_to(m_fh_label, *prev, Gtk::POS_BOTTOM, 1, 1);
-    m_grid.attach_next_to(m_fv_label, *val_labels[INPUT_COUNT - 1], Gtk::POS_BOTTOM, 1, 1);
+    m_grid.attach_next_to(m_fv_label, *val_labels[ADSR::INPUT_COUNT - 1], Gtk::POS_BOTTOM, 1, 1);
 }
 
 void MainWindow::on_m_button_press() {
@@ -70,17 +70,24 @@ void MainWindow::on_m_button_press() {
             sigc::mem_fun(*this, &MainWindow::on_timeout),
             TIMEOUT_PERIOD
         );
+        ADSR::start();
         update_timer.reset();
     }
     else {
         m_button.set_label(TOGGLE_ON_TEXT);
         update_connection.disconnect();
+        ADSR::stop();
     }
 }
 
 bool MainWindow::on_timeout() {
-    double elapsed = update_timer.elapsed();
+    ADSR::AdsStats stats;
+    double elapsed;
+
+    ADSR::retrieve(stats);
+    puts("Put update code here.");
+
+    elapsed = update_timer.elapsed();
     update_timer.reset();
-    printf("%.2f\n", elapsed);
     return true;
 }

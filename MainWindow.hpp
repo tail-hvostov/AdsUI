@@ -9,7 +9,7 @@
 #include <glibmm/main.h>
 #include <glibmm/timer.h>
 
-#define INPUT_COUNT 8
+#include "AdsReader.hpp"
 
 class MainWindow : public Gtk::Window {
 private:
@@ -21,7 +21,7 @@ private:
     Gtk::Button m_button;
     Gtk::Box m_box;
     Gtk::Grid m_grid;
-    Gtk::Label* val_labels[INPUT_COUNT];
+    Gtk::Label* val_labels[ADSR::INPUT_COUNT];
     Gtk::Label m_fh_label;
     Gtk::Label m_fv_label;
 
