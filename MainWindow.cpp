@@ -34,6 +34,10 @@ MainWindow::MainWindow() : m_button(TOGGLE_ON_TEXT),
     m_button.signal_clicked().connect(
         sigc::mem_fun(*this, &MainWindow::on_m_button_press)
     );
+
+    signal_hide().connect(
+        sigc::mem_fun(*this, &MainWindow::on_window_hide)
+    );
     
     show_all_children();
 }
@@ -85,9 +89,20 @@ bool MainWindow::on_timeout() {
     double elapsed;
 
     ADSR::retrieve(stats);
-    puts("Put update code here.");
+
+    char buf[10];
+    for (int i = 0; i < ADSR::INPUT_COUNT; i++) {
+        sprintf(buf, "%.4f", stats.average_v[i]);
+        val_labels[i]->set_label(buf);
+    }
 
     elapsed = update_timer.elapsed();
     update_timer.reset();
     return true;
+}
+
+void MainWindow::on_window_hide() {
+    if (is_ads_active) {
+        ADSR::stop();
+    }
 }

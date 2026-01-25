@@ -15,6 +15,7 @@ class MainWindow : public Gtk::Window {
 private:
     void on_m_button_press();
     bool on_timeout();
+    void on_window_hide();
 
     void init_labels();
 
