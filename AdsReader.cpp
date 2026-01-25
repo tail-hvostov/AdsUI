@@ -5,6 +5,8 @@
 #include <thread>
 #include <memory>
 
+#include <chrono>
+
 namespace {
 	ADSR::AdsStats global_stats;
 	std::atomic_flag access_flag;
@@ -12,7 +14,15 @@ namespace {
 	std::unique_ptr<std::thread> measurement_thread;
 
 	void measurement_thread_proc() {
-		puts("measure");
+		while (measurements_needed.load()) {
+			puts("measure");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			while (access_flag.test_and_set());
+
+			global_stats.measurements++;
+
+			access_flag.clear();
+		}
 	}
 }
 
