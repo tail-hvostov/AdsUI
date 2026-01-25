@@ -29,6 +29,7 @@ namespace {
 namespace ADSR {
 	void start() {
 		if (!measurements_needed.exchange(true)) {
+			std::memset(&global_stats, 0, sizeof(global_stats));
 			measurement_thread.reset(new std::thread(&measurement_thread_proc));
 		}
 	}

@@ -9,11 +9,12 @@
 
 const char* TOGGLE_ON_TEXT = "Toggle on";
 const char* TOGGLE_OFF_TEXT = "Toggle off";
+const char* DEFAULT_VALUE_TEXT = "0.0000";
 
 MainWindow::MainWindow() : m_button(TOGGLE_ON_TEXT),
                             m_box(Gtk::ORIENTATION_VERTICAL, 5),
                             m_fh_label("Frequency"),
-                            m_fv_label("0") {
+                            m_fv_label(DEFAULT_VALUE_TEXT) {
     set_title("ADS controller");
     set_default_size(WINDOW_DEFAULT_WIDTH, 200);
     
@@ -46,7 +47,7 @@ void MainWindow::init_labels() {
     char buf[10];
     Gtk::Label* prev = Gtk::make_managed<Gtk::Label>("0.");
     prev->set_halign(Gtk::ALIGN_START);
-    val_labels[0] = Gtk::make_managed<Gtk::Label>("0");
+    val_labels[0] = Gtk::make_managed<Gtk::Label>(DEFAULT_VALUE_TEXT);
     val_labels[0]->set_halign(Gtk::ALIGN_START);
     m_grid.add(*prev);
     m_grid.add(*val_labels[0]);
@@ -56,7 +57,7 @@ void MainWindow::init_labels() {
         m_grid.attach_next_to(*l, *prev, Gtk::POS_BOTTOM, 1, 1);
         prev = l;
         prev->set_halign(Gtk::ALIGN_START);
-        l = Gtk::make_managed<Gtk::Label>("0");
+        l = Gtk::make_managed<Gtk::Label>(DEFAULT_VALUE_TEXT);
         m_grid.attach_next_to(*l, *val_labels[i - 1], Gtk::POS_BOTTOM, 1, 1);
         val_labels[i] = l;
         l->set_halign(Gtk::ALIGN_START);
@@ -89,14 +90,18 @@ bool MainWindow::on_timeout() {
     double elapsed;
 
     ADSR::retrieve(stats);
+    elapsed = update_timer.elapsed();
 
-    char buf[10];
+    char buf[20];
     for (int i = 0; i < ADSR::INPUT_COUNT; i++) {
         sprintf(buf, "%.4f", stats.average_v[i]);
         val_labels[i]->set_label(buf);
     }
 
-    elapsed = update_timer.elapsed();
+    double frequency = stats.measurements / elapsed;
+    sprintf(buf, "%.4f", frequency);
+    m_fv_label.set_label(buf);
+
     update_timer.reset();
     return true;
 }
