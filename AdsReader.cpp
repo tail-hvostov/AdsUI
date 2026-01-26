@@ -5,7 +5,7 @@
 #include <thread>
 #include <memory>
 #include <cstring>
-#include <stdexcept>>
+#include <stdexcept>
 
 #include "ADS1256.hpp"
 
