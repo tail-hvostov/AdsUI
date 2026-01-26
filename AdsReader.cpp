@@ -12,22 +12,18 @@
 namespace {
 	ADSR::AdsStats global_stats;
 	std::atomic_flag access_flag;
-	std::atomic<bool> measurements_needed;
+
+	std::atomic<UDOUBLE> vals[ADSR::INPUT_COUNT];
+	std::atomic<unsigned int> measurements;
+
 	std::unique_ptr<std::thread> measurement_thread;
 
 	void measurement_thread_proc() {
-		UDOUBLE ADC[ADSR::INPUT_COUNT];
 		while (measurements_needed.load()) {
-			ADS1256_GetAll(ADC);
-
-			while (access_flag.test_and_set());
-
 			for (int i = 0; i < ADSR::INPUT_COUNT; i++) {
-				global_stats.average_in[i] += ADC[i] * ADSR::REF_U / (double)0x7fffff;
+				vals[i].store(ADS1256_GetChannalValue(i));
 			}
-			global_stats.measurements++;
-
-			access_flag.clear();
+			measurements++;
 		}
 	}
 }
@@ -55,14 +51,9 @@ namespace ADSR {
 	}
 
 	void retrieve(AdsStats& stats) {
-		while (access_flag.test_and_set());
-		stats = global_stats;
-		std::memset(&global_stats, 0, sizeof(global_stats));
-		access_flag.clear();
-		if (stats.measurements > 0) {
-			for (int i = 0; i < INPUT_COUNT; i++) {
-				stats.average_in[i] /= stats.measurements;
-			}
+		for (int i = 0; i < INPUT_COUNT; i++) {
+			stats.average_in[i] = vals[i].load() * REF_U / 0x7fffff;
 		}
+		stats.measurements = measurements.load();
 	}
 }
