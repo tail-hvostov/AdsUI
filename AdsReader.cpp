@@ -23,7 +23,7 @@ namespace {
 			while (access_flag.test_and_set());
 
 			for (int i = 0; i < ADSR::INPUT_COUNT; i++) {
-				global_stats.average_in[i] = ADC[i] * ADSR::REF_U / 0x7fffff;
+				global_stats.average_in[i] += ADC[i] * ADSR::REF_U / (double)0x7fffff;
 			}
 			global_stats.measurements++;
 
