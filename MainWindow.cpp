@@ -69,14 +69,18 @@ void MainWindow::init_labels() {
 void MainWindow::on_m_button_press() {
     is_ads_active = !is_ads_active;
     if (is_ads_active) {
-        m_button.set_label(TOGGLE_OFF_TEXT);
-
-        update_connection = Glib::signal_timeout().connect(
-            sigc::mem_fun(*this, &MainWindow::on_timeout),
-            TIMEOUT_PERIOD
-        );
-        ADSR::start();
-        update_timer.reset();
+        try {
+            ADSR::start();
+            m_button.set_label(TOGGLE_OFF_TEXT);
+            update_connection = Glib::signal_timeout().connect(
+                sigc::mem_fun(*this, &MainWindow::on_timeout),
+                TIMEOUT_PERIOD
+            );
+            update_timer.reset();
+        }
+        catch (std::runtime_error e) {
+            is_ads_active = !is_ads_active;
+        }
     }
     else {
         m_button.set_label(TOGGLE_ON_TEXT);

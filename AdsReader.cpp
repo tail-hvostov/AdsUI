@@ -5,8 +5,9 @@
 #include <thread>
 #include <memory>
 #include <cstring>
+#include <stdexcept>>
 
-#include <chrono>
+#include "ADS1256.hpp"
 
 namespace {
 	ADSR::AdsStats global_stats;
@@ -31,6 +32,13 @@ namespace ADSR {
 	void start() {
 		if (!measurements_needed.exchange(true)) {
 			std::memset(&global_stats, 0, sizeof(global_stats));
+			DEV_ModuleInit();
+			if(ADS1256_init() == 1){
+        		puts("Error!");
+        		DEV_ModuleExit();
+		        measurements_needed.store(false);
+		        throw std::runtime_error("ADS error!");
+		    }
 			measurement_thread.reset(new std::thread(&measurement_thread_proc));
 		}
 	}
@@ -38,6 +46,7 @@ namespace ADSR {
 	void stop() {
 		if (measurements_needed.exchange(false)) {
 			measurement_thread->join();
+			DEV_ModuleExit();
 		}
 	}
 
