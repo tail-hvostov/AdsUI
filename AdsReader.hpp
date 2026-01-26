@@ -6,7 +6,7 @@ namespace ADSR {
 
 	struct AdsStats {
 		unsigned int measurements;
-		double average_v[INPUT_COUNT];
+		double average_in[INPUT_COUNT];
 	};
 
 	void start();

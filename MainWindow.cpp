@@ -78,7 +78,7 @@ void MainWindow::on_m_button_press() {
             );
             update_timer.reset();
         }
-        catch (std::runtime_error e) {
+        catch (std::runtime_error& e) {
             is_ads_active = !is_ads_active;
         }
     }
@@ -98,7 +98,7 @@ bool MainWindow::on_timeout() {
 
     char buf[20];
     for (int i = 0; i < ADSR::INPUT_COUNT; i++) {
-        sprintf(buf, "%.4f", stats.average_v[i]);
+        sprintf(buf, "%.4f", stats.average_in[i]);
         val_labels[i]->set_label(buf);
     }
 

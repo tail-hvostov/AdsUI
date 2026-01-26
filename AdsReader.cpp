@@ -16,9 +16,10 @@ namespace {
 	std::unique_ptr<std::thread> measurement_thread;
 
 	void measurement_thread_proc() {
+		UDOUBLE ADC[8];
 		while (measurements_needed.load()) {
-			puts("measure");
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			ADS1256_GetAll(ADC);
+
 			while (access_flag.test_and_set());
 
 			global_stats.measurements++;
@@ -55,7 +56,7 @@ namespace ADSR {
 		stats = global_stats;
 		if (stats.measurements > 0) {
 			for (int i = 0; i < INPUT_COUNT; i++) {
-				stats.average_v[i] /= stats.measurements;
+				stats.average_in[i] /= stats.measurements;
 			}
 		}
 		std::memset(&global_stats, 0, sizeof(global_stats));
