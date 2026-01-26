@@ -54,12 +54,12 @@ namespace ADSR {
 	void retrieve(AdsStats& stats) {
 		while (access_flag.test_and_set());
 		stats = global_stats;
+		std::memset(&global_stats, 0, sizeof(global_stats));
+		access_flag.clear();
 		if (stats.measurements > 0) {
 			for (int i = 0; i < INPUT_COUNT; i++) {
 				stats.average_in[i] /= stats.measurements;
 			}
 		}
-		std::memset(&global_stats, 0, sizeof(global_stats));
-		access_flag.clear();
 	}
 }

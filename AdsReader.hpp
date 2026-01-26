@@ -3,6 +3,7 @@
 
 namespace ADSR {
 	const int INPUT_COUNT = 8;
+	const double REF_U = 5.0;
 
 	struct AdsStats {
 		unsigned int measurements;
