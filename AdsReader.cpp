@@ -54,6 +54,6 @@ namespace ADSR {
 		for (int i = 0; i < INPUT_COUNT; i++) {
 			stats.average_in[i] = vals[i].load() * REF_U / 0x7fffff;
 		}
-		stats.measurements = measurements.load();
+		stats.measurements = measurements.exchange(0);
 	}
 }
