@@ -21,7 +21,6 @@ list(FILTER hdrs EXCLUDE REGEX ".*/build/.*")
 add_executable(${PROJECT_NAME} ${srcs} ${hdrs})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${GTKMM_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${WIRINGPI_LIB})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${GTKMM_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${GTKMM_LIBRARIES} ${WIRINGPI_LIB})
 target_compile_options(${PROJECT_NAME} PRIVATE ${GTKMM_CFLAGS_OTHER})
 target_link_libraries(AdsUI PRIVATE Threads::Threads)
