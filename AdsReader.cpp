@@ -11,7 +11,7 @@
 
 namespace {
 	ADSR::AdsStats global_stats;
-	std::atomic_flag access_flag;
+	std::atomic<bool> measurements_needed;
 
 	std::atomic<UDOUBLE> vals[ADSR::INPUT_COUNT];
 	std::atomic<unsigned int> measurements;
