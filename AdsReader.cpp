@@ -16,12 +16,15 @@ namespace {
 	std::unique_ptr<std::thread> measurement_thread;
 
 	void measurement_thread_proc() {
-		UDOUBLE ADC[8];
+		UDOUBLE ADC[INPUT_COUNT];
 		while (measurements_needed.load()) {
 			ADS1256_GetAll(ADC);
 
 			while (access_flag.test_and_set());
 
+			for (int i = 0; i < INPUT_COUNT; i++) {
+				global_stats.average_in[i] = ADC[i] * REF_U / 0x7fffff;
+			}
 			global_stats.measurements++;
 
 			access_flag.clear();
