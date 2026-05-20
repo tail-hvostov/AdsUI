@@ -62,3 +62,4 @@ https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2
 11. Найти файл, где подключаются overlays (вроде это config.txt в системных файлах);
 12. Убрать упоминание оригинального dtb и вписать имя Вашего БЕЗ РАСШИРЕНИЯ;
 13. Перезагрузить устройство (sudo reboot).
+P.S. У меня тачскрин не завёлся даже с оригинальным dtb.
